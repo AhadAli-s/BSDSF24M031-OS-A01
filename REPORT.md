@@ -26,3 +26,24 @@ An annotated tag, created with git tag -a tagname -m "message", stores extra met
 A GitHub Release turns a git tag into a user-facing, documented version of a project. It gives the version a title, a description explaining what changed or what that version includes, and a dedicated page other people can visit to see the project's version history over time. Releases make it easy for anyone to find and download specific past versions without needing to dig through commit history or clone the entire repository.
 
 Attaching binaries, such as the compiled bin/client executable, means an end user does not need to have a compiler, the source code, or any build tools installed to run the program. They can simply download the prebuilt binary from the release page and run it directly. This is the standard way software is distributed to non-developers, and it demonstrates the final, practical outcome of the whole build process: a runnable artifact, not just source code.
+
+
+## Part 3: Creating and using Static Library
+
+### Q1: Compare the Makefile from Part 2 and Part 3. What are the key differences in the variables and rules that enable the creation of a static library?
+
+In Part 2, the final executable was built directly from all three object files: bin/client: obj/main.o obj/mystrfunctions.o obj/myfilefunctions.o, and the link command passed all three .o files straight to gcc.
+
+In Part 3, a new intermediate target was introduced: lib/libmyutils.a: obj/mystrfunctions.o obj/myfilefunctions.o, with a command using ar rcs to bundle mystrfunctions.o and myfilefunctions.o into a single archive file. The final executable's rule changed to bin/client_static: obj/main.o lib/libmyutils.a, meaning it now depends on the archive instead of the two object files individually. The link command also changed from listing every .o file to using -Llib -lmyutils, telling gcc to search the lib directory and link against libmyutils.a specifically. The key difference is that Part 3 adds a library-creation step in between compiling and linking, and the final link command uses library search/link flags instead of listing object files directly.
+
+### Q2: What is the purpose of the ar command? Why is ranlib often used immediately after it?
+
+ar is the archiver utility used to create, modify, and extract from archive files, most commonly used to bundle multiple .o object files into a single .a static library file. It essentially packages several compiled object files together into one file that the linker can later search through.
+
+ranlib generates or updates an index inside the archive that lists which symbols (functions and variables) are defined in which object file within the archive. This index lets the linker quickly locate the correct object file for a given symbol without having to scan through every object file in the archive sequentially. Without this index, older linkers could fail to resolve symbols correctly depending on the order objects were added. In this project, the s flag was passed directly to ar (ar rcs), which performs the same indexing that ranlib would do, making a separate ranlib call unnecessary.
+
+### Q3: When you run nm on your client_static executable, are the symbols for functions like mystrlen present? What does this tell you about how static linking works?
+
+Yes. Running nm bin/client_static | grep mystrlen shows mystrlen defined inside the executable with a T symbol type, meaning it is defined in the executable's own text/code section.
+
+This confirms that static linking physically copies the actual machine code for each required function out of the library archive and embeds it directly into the final executable at link time. The resulting binary is self-contained, it does not need libmyutils.a to exist anymore in order to run, since all the code it needs was already copied in during linking. This is different from dynamic linking, where the executable would instead reference an external shared library that must be present and loaded at runtime.
