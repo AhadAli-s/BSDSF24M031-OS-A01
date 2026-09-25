@@ -1,0 +1,47 @@
+.TH MYFILEFUNCTIONS 3 "September 2026" "libmyutils 1.0" "libmyutils Manual"
+.SH NAME
+wordCount, mygrep \- custom file-based utility functions
+.SH SYNOPSIS
+.B #include "myfilefunctions.h"
+.sp
+.BI "int wordCount(FILE *" file ", int *" lines ", int *" words ", int *" chars ");"
+.br
+.BI "int mygrep(FILE *" fp ", const char *" search_str ", char ***" matches ");"
+.SH DESCRIPTION
+These functions provide file-based text processing utilities.
+.PP
+.B wordCount
+reads through the file stream
+.I file
+and counts the number of lines, words, and characters it contains. The results are stored in
+.I lines,
+.I words,
+and
+.I chars
+respectively. Returns 0 on success and \-1 on failure (for example, if
+.I file
+is NULL).
+.PP
+.B mygrep
+searches every line of the file stream
+.I fp
+for occurrences of the substring
+.I search_str.
+Matching lines are dynamically allocated and stored in the array pointed to by
+.I matches.
+The caller is responsible for freeing each matched string and the array itself. Returns the number of matching lines found, or \-1 on failure.
+.SH RETURN VALUE
+.B wordCount
+returns 0 on success, \-1 on failure.
+.B mygrep
+returns the number of matches found, or \-1 on failure.
+.SH NOTES
+The memory allocated by
+.B mygrep
+for the matches array and each individual matched line must be freed by the caller using
+.BR free (3)
+to avoid memory leaks.
+.SH AUTHOR
+Ahad Ali
+.MT ahadalisaeed@gmail.com
+.ME

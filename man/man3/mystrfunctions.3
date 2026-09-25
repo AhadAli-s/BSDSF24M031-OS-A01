@@ -1,0 +1,63 @@
+.TH MYSTRFUNCTIONS 3 "September 2026" "libmyutils 1.0" "libmyutils Manual"
+.SH NAME
+mystrlen, mystrcpy, mystrncpy, mystrcat \- custom string manipulation functions
+.SH SYNOPSIS
+.B #include "mystrfunctions.h"
+.sp
+.BI "int mystrlen(const char *" s ");"
+.br
+.BI "int mystrcpy(char *" dest ", const char *" src ");"
+.br
+.BI "int mystrncpy(char *" dest ", const char *" src ", int " n ");"
+.br
+.BI "int mystrcat(char *" dest ", const char *" src ");"
+.SH DESCRIPTION
+These functions provide custom implementations of common C string operations, similar in spirit to the standard C library's string.h functions.
+.PP
+.B mystrlen
+returns the number of characters in the null-terminated string
+.I s,
+not counting the terminating null byte.
+.PP
+.B mystrcpy
+copies the null-terminated string
+.I src
+into
+.I dest,
+including the terminating null byte, and returns the number of characters copied.
+.PP
+.B mystrncpy
+copies at most
+.I n
+characters from
+.I src
+into
+.I dest.
+If
+.I src
+is shorter than
+.I n,
+the remainder of
+.I dest
+is padded with null bytes. Returns the number of characters actually copied from
+.I src.
+.PP
+.B mystrcat
+appends the null-terminated string
+.I src
+to the end of the null-terminated string
+.I dest,
+and returns the new total length of
+.I dest.
+.SH RETURN VALUE
+.B mystrlen
+returns the length of the string.
+.B mystrcpy,
+.B mystrncpy,
+and
+.B mystrcat
+return the number of characters written or copied.
+.SH AUTHOR
+Ahad Ali
+.MT ahadalisaeed@gmail.com
+.ME
