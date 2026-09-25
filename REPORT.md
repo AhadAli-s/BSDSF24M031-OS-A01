@@ -72,3 +72,17 @@ LD_LIBRARY_PATH is an environment variable that tells the dynamic loader additio
 When client_dynamic was run without LD_LIBRARY_PATH set, it failed with "cannot open shared object file", because the loader could not find libmyutils.so anywhere in its default search paths. Setting LD_LIBRARY_PATH to include the project's lib/ folder gave the loader an additional place to look, allowing it to locate and load the library successfully.
 
 This demonstrates that with dynamic linking, resolving where library code actually lives is deferred until the program is run, rather than being permanently baked into the executable at compile time like static linking does. The operating system's dynamic loader is responsible for finding, loading, and linking shared libraries into a process's memory at startup (or even later, for libraries loaded on demand), a responsibility that does not exist at all for statically linked programs.
+
+## Part 5: Creating and Accessing Man Pages
+
+### Q1: Man page content and structure
+
+Two man pages were created under man/man3/: mystrfunctions.3 documenting mystrlen, mystrcpy, mystrncpy, and mystrcat, and myfilefunctions.3 documenting wordCount and mygrep. Each page follows standard groff conventions with a .TH title header, .SH NAME, .SH SYNOPSIS, .SH DESCRIPTION, and .SH AUTHOR sections, and was previewed locally using man -l before installation to confirm correct formatting.
+
+### Q2: Makefile install target
+
+The install target was added to the project's Makefile. It copies the compiled client_dynamic executable to /usr/local/bin/client so it can be run from anywhere on the system, copies libmyutils.so to /usr/local/lib/ and runs ldconfig so the dynamic loader can find it without needing LD_LIBRARY_PATH, and copies both man3 pages into /usr/local/share/man/man3/, followed by mandb to rebuild the man page index so they become accessible immediately.
+
+### Q3: Git workflow
+
+A separate man-pages branch was created from main. All man page files and the modified Makefile were committed to this branch, and it will be merged back into main in the final submission step, along with a v0.4.1-final tag and corresponding GitHub Release.
